@@ -17,7 +17,7 @@ print('avgObjSize : '+logsinfosbefore['avgObjSize']);
 print('storageSize : '+logsinfosbefore['storageSize']);
 
 // DELETE OLD LOGS:
-db.logs.remove({
+db.logs.deleteMany({
     "created" : {
       $lte: thirtydaysago, // lt less than
     }

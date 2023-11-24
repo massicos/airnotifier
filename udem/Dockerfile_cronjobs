@@ -1,15 +1,12 @@
-FROM ubuntu:22.04
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+FROM ubi9-init:latest
 
-RUN apt-get update
-RUN apt-get -y install nano
-RUN apt-get -y install wget
-RUN apt-get install -y cron
+RUN dnf -y install nano
+RUN dnf -y install wget
+RUN dnf install -y cronie
 
-RUN wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.1.deb -P /tmp
-RUN apt install /tmp/mongodb-database-tools-ubuntu2204-x86_64-100.9.1.deb
-RUN rm /tmp/mongodb-database-tools-ubuntu2204-x86_64-100.9.1.deb
+RUN wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel90-x86_64-100.9.3.rpm -P /tmp
+RUN dnf install -y /tmp/mongodb-database-tools-rhel90-x86_64-100.9.3.rpm
+RUN rm /tmp/mongodb-database-tools-rhel90-x86_64-100.9.3.rpm
 
 RUN wget https://downloads.mongodb.com/compass/mongosh-2.0.2-linux-x64.tgz -P /tmp
 RUN tar xvfz /tmp/mongosh-2.0.2-linux-x64.tgz -C /
@@ -23,9 +20,10 @@ COPY MongoDB-clear-logs.js /airnotifier
 COPY sauvegarderMongoDB.sh /airnotifier
 COPY lib.sh /airnotifier
 RUN chmod +x /airnotifier/sauvegarderMongoDB.sh /airnotifier/lib.sh
-RUN apt install -y tmpreaper
+RUN dnf install -y https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/tmpwatch-2.11-20.el9.x86_64.rpm
 
 COPY crontab.txt /opt
 RUN crontab /opt/crontab.txt
+RUN rm /opt/crontab.txt
 
-CMD ["cron", "-f"]
+ENV EDITOR=nano
